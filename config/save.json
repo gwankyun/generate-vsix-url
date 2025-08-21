@@ -1,0 +1,22 @@
+{
+    "bscan.raku-navigator": {
+        "platform": "",
+        "version": "0.4.1"
+    },
+    "marscode.marscode-extension": {
+        "platform": "",
+        "version": "1.2.46"
+    },
+    "ms-python.python": {
+        "platform": "",
+        "version": "2025.12.0"
+    },
+    "pkief.material-icon-theme": {
+        "platform": "",
+        "version": "5.26.0"
+    },
+    "rust-lang.rust-analyzer": {
+        "platform": "win32-x64",
+        "version": "0.3.2577"
+    }
+}
