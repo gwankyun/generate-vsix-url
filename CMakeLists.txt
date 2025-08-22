@@ -33,6 +33,10 @@ add_executable(main)
 target_sources(main
   PRIVATE FILE_SET CXX_MODULES FILES
     src/main.ixx
+    src/control.ixx
+    src/util.ixx
+  PRIVATE
+    src/util.cpp
 )
 target_link_libraries(main
   PRIVATE
