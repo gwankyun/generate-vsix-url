@@ -2,8 +2,6 @@
 
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
-#define NOMINMAX
-#include <windows.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/scope/defer.hpp >
@@ -13,6 +11,8 @@
 
 export module main;
 import std;
+import control;
+import util;
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -37,60 +37,6 @@ struct Extension
     std::string version;
     std::string platform;
 };
-
-json load_json_file(const std::string& filename)
-{
-    try
-    {
-        std::ifstream ifs(filename);
-        if (!ifs.is_open())
-        {
-            throw std::ios_base::failure("无法打开文件: " + filename);
-        }
-        return json::parse(ifs);
-    }
-    catch (const json::parse_error& e)
-    {
-        // std::cerr << "JSON 解析错误: " << e.what() << " (行: " << e.line() << ", 列: " << e.column() << ")"
-        //           << std::endl;
-        throw;
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "读取失败: " << e.what() << std::endl;
-        throw;
-    }
-}
-
-std::vector<std::string> split(const std::string& s, char delimiter)
-{
-    std::vector<std::string> tokens;
-
-    auto to_str = [](auto&& part) { return std::string(part.begin(), part.end()); };
-
-    auto parts =                       //
-        s                              //
-        | std::views::split(delimiter) //
-        | std::views::transform(to_str);
-    std::ranges::copy(parts, std::back_inserter(tokens));
-    return tokens;
-}
-
-namespace control
-{
-    bool InputText(const std::string& _label, std::vector<char>& _buffer)
-    {
-        return ImGui::InputText(_label.c_str(), _buffer.data(), _buffer.size());
-    }
-
-    void Text(const std::string& _label, std::size_t _size)
-    {
-        std::vector<char> buffer(_size, ' ');
-        buffer[_size - 1] = '\0';
-        std::copy_n(_label.c_str(), std::min(_label.size(), buffer.size() - 1), buffer.data());
-        ImGui::Text(buffer.data());
-    }
-} // namespace control
 
 struct Config
 {
@@ -129,7 +75,7 @@ void save(Config& config, fs::path data_path)
 void generate(const std::string& id, const Extension& value)
 {
     std::string base_url = "https://marketplace.visualstudio.com/_apis/public/gallery";
-    auto vec = split(id, '.');
+    auto vec = util::split(id, '.');
     auto publisher = vec[0];
     auto name = vec[1];
     SPDLOG_INFO("publisher: {}", publisher);
@@ -160,7 +106,7 @@ struct Add
     }
 };
 
-auto add_pop = [&](Config& config, Add& add)
+void add_pop(Config& config, Add& add)
 {
     auto id = "OpenPopup_add";
     auto input_identifier = "##InputText_add_identifier";
@@ -227,7 +173,7 @@ auto add_pop = [&](Config& config, Add& add)
             ImGui::CloseCurrentPopup(); // 关闭弹窗
         }
     }
-};
+}
 
 struct Update
 {
@@ -299,19 +245,11 @@ void update_pop(Config& config, Update& update, const std::string& _current)
     }
 }
 
-std::string executable_path()
-{
-    char path[MAX_PATH] = {0};
-    GetModuleFileNameA(NULL, path, sizeof(path));
-    std::string p(path);
-    return p.substr(0, p.find_last_of('\\'));
-}
-
 export int main(int _argc, char* _argv[])
 {
     spdlog::set_pattern("[%C-%m-%d %T.%e] [%^%L%$] [t:%6t] [%-8!!:%4#] %v");
 
-    auto exe_path = fs::path(executable_path());
+    auto exe_path = fs::path(util::executable_path());
     SPDLOG_INFO("executable_path: {}", exe_path.string());
 
 #ifdef _DEBUG
@@ -347,7 +285,7 @@ export int main(int _argc, char* _argv[])
 
     if (fs::exists(data_path))
     {
-        json data = load_json_file(data_path.string());
+        json data = util::load_json_file(data_path.string());
 
         for (auto& [key, value] : data.items())
         {
