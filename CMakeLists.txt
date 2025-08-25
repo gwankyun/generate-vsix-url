@@ -37,6 +37,8 @@ target_sources(main
     src/util.ixx
   PRIVATE
     src/util.cpp
+    src/control.cpp
+    src/main.cpp
 )
 target_link_libraries(main
   PRIVATE
