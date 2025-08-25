@@ -51,9 +51,21 @@ namespace util
 
     std::string executable_path()
     {
-        char path[MAX_PATH] = { 0 };
+        char path[MAX_PATH] = {0};
         GetModuleFileNameA(NULL, path, sizeof(path));
         std::string p(path);
         return p.substr(0, p.find_last_of('\\'));
+    }
+
+    void hide_window()
+    {
+#ifdef _DEBUG
+        // std::cout << "当前为 Debug 模式" << std::endl;
+#else
+        // std::cout << "当前为 Release 模式" << std::endl;
+        //  隐藏命令行窗口
+        HWND hwnd = GetConsoleWindow();
+        ShowWindow(hwnd, SW_HIDE);
+#endif
     }
 } // namespace util

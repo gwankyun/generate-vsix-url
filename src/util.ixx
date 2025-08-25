@@ -14,4 +14,6 @@ export namespace util
     std::vector<std::string> split(const std::string& s, char delimiter);
 
     std::string executable_path();
+
+    void hide_window();
 } // namespace util
