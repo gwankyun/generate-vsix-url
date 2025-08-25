@@ -252,14 +252,7 @@ export int main(int _argc, char* _argv[])
     auto exe_path = fs::path(util::executable_path());
     SPDLOG_INFO("executable_path: {}", exe_path.string());
 
-#ifdef _DEBUG
-    // std::cout << "当前为 Debug 模式" << std::endl;
-#else
-    // std::cout << "当前为 Release 模式" << std::endl;
-    //  隐藏命令行窗口
-    HWND hwnd = GetConsoleWindow();
-    ShowWindow(hwnd, SW_HIDE);
-#endif
+    util::hide_window();
 
     Add add;
     add.clear();
