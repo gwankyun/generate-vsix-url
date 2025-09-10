@@ -32,7 +32,6 @@ check_package(boost_config)
 add_executable(main)
 target_sources(main
   PRIVATE FILE_SET CXX_MODULES FILES
-    src/main.ixx
     src/control.ixx
     src/util.ixx
   PRIVATE
@@ -51,3 +50,13 @@ target_link_libraries(main
     Boost::config
 )
 target_compile_features(main PRIVATE cxx_std_23)
+
+# 僅在Release構建中設置為Windows子系統（隱藏控制臺）
+set_target_properties(main PROPERTIES
+    WIN32_EXECUTABLE $<CONFIG:Release>  # Release模式：WIN32子系統
+)
+
+# 添加鏈接器標志：指定入口點點mainCRTStartup（兼容標準main函數）
+target_link_options(main PRIVATE
+    $<$<CONFIG:Release>:/ENTRY:mainCRTStartup>  # Release模式生效
+)

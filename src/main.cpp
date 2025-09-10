@@ -9,7 +9,7 @@
 #include <hello_imgui/hello_imgui.h>
 #include <nlohmann/json.hpp>
 
-module main;
+export module main;
 import std;
 import control;
 import util;
@@ -245,14 +245,14 @@ void update_pop(Config& config, Update& update, const std::string& _current)
     }
 }
 
-int main(int _argc, char* _argv[])
+export int main(int _argc, char* _argv[])
 {
     spdlog::set_pattern("[%C-%m-%d %T.%e] [%^%L%$] [t:%6t] [%-8!!:%4#] %v");
 
     auto exe_path = fs::path(util::executable_path());
     SPDLOG_INFO("executable_path: {}", exe_path.string());
 
-    util::hide_window();
+    //util::hide_window();
 
     Add add;
     add.clear();
